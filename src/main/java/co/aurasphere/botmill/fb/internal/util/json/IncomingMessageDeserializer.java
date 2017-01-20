@@ -53,7 +53,15 @@ public class IncomingMessageDeserializer implements
 	 */
 	public IncomingMessage deserialize(JsonElement json, Type typeOfT,
 			JsonDeserializationContext context) throws JsonParseException {
-		boolean isEcho = json.getAsJsonObject().get("is_echo").getAsBoolean();
+		
+		
+		boolean isEcho = false;
+		
+		if (json.getAsJsonObject().get("is_echo") != null &&
+				json.getAsJsonObject().get("is_echo").isJsonNull()){
+			isEcho = json.getAsJsonObject().get("is_echo").getAsBoolean();
+		}
+		
 		Class<? extends IncomingMessage> incomingMessageClass = null;
 		if (isEcho == true) {
 			incomingMessageClass = EchoMessage.class;
