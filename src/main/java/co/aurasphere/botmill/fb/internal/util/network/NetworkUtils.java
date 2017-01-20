@@ -171,7 +171,7 @@ public class NetworkUtils {
 	 * @return response the response.
 	 */
 	private static String send(HttpRequestBase request) {
-		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+		CloseableHttpClient httpClient = HttpClientBuilder.create().useSystemProperties().build();
 		logger.debug(request.getRequestLine().toString());
 		HttpResponse httpResponse = null;
 		String response = null;
