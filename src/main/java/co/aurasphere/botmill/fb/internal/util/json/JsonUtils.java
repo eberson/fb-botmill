@@ -24,6 +24,7 @@
 package co.aurasphere.botmill.fb.internal.util.json;
 
 import java.util.Calendar;
+import java.util.List;
 
 import co.aurasphere.botmill.fb.model.base.Attachment;
 import co.aurasphere.botmill.fb.model.incoming.callback.IncomingMessage;
@@ -77,6 +78,9 @@ public class JsonUtils {
 
 			// Deserializes buttons from interface.
 			builder.registerTypeAdapter(Button.class, new ButtonDeserializer());
+			
+			builder.registerTypeAdapter(List.class, new PolimorphicalListSerializer<List<Button>>());
+			
 
 			// Deserializes incoming messages from interface.
 			builder.registerTypeAdapter(IncomingMessage.class, new IncomingMessageDeserializer());

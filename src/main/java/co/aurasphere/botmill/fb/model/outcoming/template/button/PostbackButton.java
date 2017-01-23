@@ -27,6 +27,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * The Class PostbackButton.
  */
@@ -50,6 +52,7 @@ public class PostbackButton extends Button {
 	 */
 	@Size(max = 20)
 	@NotBlank
+	@SerializedName("title")
 	protected String title;
 
 	/**

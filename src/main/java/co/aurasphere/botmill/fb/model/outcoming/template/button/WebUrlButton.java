@@ -63,6 +63,7 @@ public class WebUrlButton extends Button {
 	 */
 	@Size(max = 20)
 	@NotBlank
+	@SerializedName("title")
 	protected String title;
 
 	/**

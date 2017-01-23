@@ -43,7 +43,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -171,22 +170,25 @@ public class NetworkUtils {
 	 * @return response the response.
 	 */
 	private static String send(HttpRequestBase request) {
-		CloseableHttpClient httpClient = HttpClientBuilder.create().useSystemProperties().build();
+		CloseableHttpClient client = HttpClientBuilder.create().useSystemProperties().build();
 		logger.debug(request.getRequestLine().toString());
+		
 		HttpResponse httpResponse = null;
 		String response = null;
+		
 		try {
-			httpResponse = httpClient.execute(request);
+			httpResponse = client.execute(request);
 			response = logResponse(httpResponse);
 		} catch (Exception e) {
 			logger.error("Error during HTTP connection to Facebook: ", e);
 		} finally {
 			try {
-				httpClient.close();
+				client.close();
 			} catch (IOException e) {
 				logger.error("Error while closing HTTP connection: ", e);
 			}
 		}
+		
 		return response;
 	}
 
@@ -412,37 +414,27 @@ public class NetworkUtils {
 						+ FbBotMillNetworkConstants.FACEBOOK_MESSAGES_URL
 						+ pageToken);
 
-		FileBody filedata = new FileBody(file);
-		StringBody recipientPart = new StringBody("{\"id\":\"" + recipient
-				+ "\"}", ContentType.MULTIPART_FORM_DATA);
-		StringBody messagePart = new StringBody("{\"attachment\":{\"type\":\""
-				+ type.name().toLowerCase() + "\", \"payload\":{}}}",
-				ContentType.MULTIPART_FORM_DATA);
+		StringBody recipientPart = new StringBody("{\"id\":\"" + recipient + "\"}", ContentType.MULTIPART_FORM_DATA);
+		StringBody messagePart = new StringBody("{\"attachment\":{\"type\":\"" + type.name().toLowerCase() + "\", \"payload\":{}}}", ContentType.MULTIPART_FORM_DATA);
+		
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		
 		builder.setMode(HttpMultipartMode.STRICT);
 		builder.addPart("recipient", recipientPart);
 		builder.addPart("message", messagePart);
-		// builder.addPart("filedata", filedata);
 		builder.addBinaryBody("filedata", file);
 		builder.setContentType(ContentType.MULTIPART_FORM_DATA);
 
-		// builder.setBoundary("----WebKitFormBoundary7MA4YWxkTrZu0gW");
 		HttpEntity entity = builder.build();
 		post.setEntity(entity);
 
 		// Logs the raw JSON for debug purposes.
-		BufferedReader br;
-		// post.addHeader("Content-Type", "multipart/form-data");
 		try {
-			// br = new BufferedReader(new InputStreamReader(
-			// ())));
-
 			Header[] allHeaders = post.getAllHeaders();
 			for (Header h : allHeaders) {
 
 				logger.debug("Header {} ->  {}", h.getName(), h.getValue());
 			}
-			// String output = br.readLine();
 
 		} catch (Exception e) {
 			e.printStackTrace();
